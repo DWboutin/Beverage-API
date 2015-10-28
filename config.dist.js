@@ -1,6 +1,6 @@
 var config = {
   bd: {
-    path: 'mongodb://[user]:[pass]@ds045664.mongolab.com:45664/beverages'
+    path: 'mongodb://[path]'
   },
   APP_PORT: 3000
 };
