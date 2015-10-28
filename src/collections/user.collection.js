@@ -21,8 +21,9 @@ class UserCollection {
 
   find(data = {}) {
     return new Promise((fulfill, reject) => {
-
+      console.log(data);
       User.find(data, (err, results) => {
+        console.log(err, results);
         if(err){
           reject(err);
         }
