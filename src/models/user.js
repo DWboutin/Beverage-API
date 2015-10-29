@@ -35,7 +35,7 @@ userSchema.pre('save', function(next) {
   var currentDate = new Date();
 
   // change the updated_at field to current date
-  this.updated_at = currentDate;
+  user.updated_at = currentDate;
 
   // only hash the password if it has been modified (or is new)
   if (!user.isModified('password')){

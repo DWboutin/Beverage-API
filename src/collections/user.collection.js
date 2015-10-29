@@ -40,18 +40,20 @@ class UserCollection {
         if(err){
           reject(err);
         }
-
-        user.comparePassword(password, (err, isMatch) => {
-          if(err){
-            reject(err);
-          }
-          if(isMatch){
-            fulfill(user);
-          }else{
-            reject('no user match');
-          }
-        });
-
+        if(user){
+          user.comparePassword(password, (err, isMatch) => {
+            if(err){
+              reject(err);
+            }
+            if(isMatch){
+              fulfill(user);
+            }else{
+              fulfill(false);
+            }
+          });
+        }else{
+          fulfill(false);
+        }
       });
 
     });
@@ -60,7 +62,7 @@ class UserCollection {
   findById(id) {
     return new Promise((fulfill, reject) => {
       if(id === 'undefined'){
-        reject('You must provide an ID');
+        fulfill(false);
       }
 
       User.findById(id, (err, result) => {
@@ -115,7 +117,7 @@ class UserCollection {
             fulfill(data);
           });
         }else{
-          fulfill('No user for this id');
+          fulfill(false);
         }
       });
 

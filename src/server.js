@@ -1,8 +1,8 @@
 import config from '../config';
 import express from 'express';
-import session from 'express-session';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import cors from './middlewares/cors';
 
 import UserCollection from './collections/user.collection';
 
@@ -15,11 +15,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 api.use(bodyParser.urlencoded({extended: true}));
 api.use(bodyParser.json());
-api.use(session({
-  secret: config.sessionSecret,
-  resave: false,
-  saveUninitialized: true,
-}));
+api.use(cors);
 
 /**
  * # POST /user - User creation
@@ -35,7 +31,11 @@ api.use(session({
 api.post('/user', (req, res) => {
 
   UserCollection.insert(req.body).then((data) => {
-    res.status(200).json({status: 1, data: data});
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't get any user"});
+    }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });
@@ -48,7 +48,11 @@ api.post('/user', (req, res) => {
 api.get('/users', (req, res) => {
 
   UserCollection.find({}).then((data) => {
-    res.status(200).json({status: 1, data: data});
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't get any user"});
+    }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });
@@ -64,7 +68,11 @@ api.get('/users', (req, res) => {
 api.get('/user/:userId', (req, res) => {
 
   UserCollection.findById(req.params.userId).then((data) => {
-    res.status(200).json({status: 1, data: data});
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "No user is found"});
+    }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });
@@ -83,11 +91,11 @@ api.get('/user/:userId', (req, res) => {
 api.post('/user/login', (req, res) => {
 
   UserCollection.login(req.body).then((user) => {
-
-    req.session.email = user.email;
-    req.session.userId = user._id;
-
-    res.status(200).json({status: 1, data: user});
+    if(user){
+      res.status(200).json({status: 1, data: user});
+    }else{
+      res.status(200).json({status: 0, message: "Username or Password doesn't matches"});
+    }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });
@@ -106,7 +114,11 @@ api.post('/user/login', (req, res) => {
 api.post('/user/:userId', (req, res) => {
 
   UserCollection.update(req.params.userId, req.body).then((data) => {
-    res.status(200).json({status: 1, data: data});
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "No user is found"});
+    }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });
@@ -125,7 +137,11 @@ api.post('/user/:userId', (req, res) => {
 api.post('/user/delete/:userId', (req, res) => {
 
   UserCollection.delete(req.params.userId).then((data) => {
-    res.status(200).json({status: 1, data: data});
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "No user is found"});
+    }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });
