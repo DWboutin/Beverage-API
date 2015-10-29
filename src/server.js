@@ -15,7 +15,11 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 api.use(bodyParser.urlencoded({extended: true}));
 api.use(bodyParser.json());
-api.use(session({secret: config.sessionSecret}));
+api.use(session({
+  secret: config.sessionSecret,
+  resave: false,
+  saveUninitialized: true,
+}));
 
 /**
  * # POST /user - User creation
@@ -78,11 +82,12 @@ api.get('/user/:userId', (req, res) => {
  */
 api.post('/user/login', (req, res) => {
 
-  UserCollection.find(req.body).then((data) => {
-    req.session.email = data[0].email;
-    req.session.userId = data[0]._id;
+  UserCollection.login(req.body).then((user) => {
 
-    res.status(200).json({status: 1, data: data});
+    req.session.email = user.email;
+    req.session.userId = user._id;
+
+    res.status(200).json({status: 1, data: user});
   }, (err) => {
     res.status(500).json({status: 0, error: err});
   });

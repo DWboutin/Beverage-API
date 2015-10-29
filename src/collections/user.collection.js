@@ -21,14 +21,37 @@ class UserCollection {
 
   find(data = {}) {
     return new Promise((fulfill, reject) => {
-      console.log(data);
+
       User.find(data, (err, results) => {
-        console.log(err, results);
         if(err){
           reject(err);
         }
 
         fulfill(results);
+      });
+
+    });
+  }
+
+  login({username, password}) {
+    return new Promise((fulfill, reject) => {
+
+      User.findOne({username: username}, (err, user) => {
+        if(err){
+          reject(err);
+        }
+
+        user.comparePassword(password, (err, isMatch) => {
+          if(err){
+            reject(err);
+          }
+          if(isMatch){
+            fulfill(user);
+          }else{
+            reject('no user match');
+          }
+        });
+
       });
 
     });

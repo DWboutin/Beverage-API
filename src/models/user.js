@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const Schema = mongoose.Schema;
 
@@ -28,18 +29,39 @@ let userSchema = new Schema({
 });
 
 userSchema.pre('save', function(next) {
+
+  var user = this;
   // get the current date
   var currentDate = new Date();
 
   // change the updated_at field to current date
   this.updated_at = currentDate;
 
-  // if created_at doesn't exist, add to that field
-  if (!this.created_at)
-    this.created_at = currentDate;
+  // only hash the password if it has been modified (or is new)
+  if (!user.isModified('password')){
+    return next();
+  }
 
-  next();
+  // if created_at doesn't exist, add to that field
+  if (!user.created_at){
+    user.created_at = currentDate;
+  }
+
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(user.password, salt, (err, hash) => {
+      user.password = hash;
+      next();
+    });
+  });
+
 });
+
+userSchema.methods.comparePassword = function(candidatePassword, cb) {
+  bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+    if (err) return cb(err);
+    cb(null, isMatch);
+  });
+};
 
 let User = mongoose.model('User', userSchema);
 
