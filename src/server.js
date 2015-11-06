@@ -94,8 +94,9 @@ api.post('/user/login', (req, res) => {
   UserCollection.login(req.body).then((user) => {
     if(user){
       user = user.toObject();
+      let password = user.password;
       delete user.password;
-      res.status(200).json({status: 1, data: user});
+      res.status(200).json({status: 1, data: user, key: password});
     }else{
       res.status(200).json({status: 0, message: "Username or Password doesn't matches"});
     }
@@ -164,7 +165,7 @@ api.post('/user/delete/:userId', (req, res) => {
  * }
  */
 api.post('/recipe', (req, res) => {
-  console.log(req.body);
+
   RecipeCollection.insert(req.body).then((data) => {
     console.log(data);
     if(data){

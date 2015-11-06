@@ -33,7 +33,7 @@ class UserCollection {
     });
   }
 
-  login({username, password}) {
+  login({username, password, encrypted = false}) {
     return new Promise((fulfill, reject) => {
 
       User.findOne({username: username}, (err, user) => {
@@ -41,16 +41,25 @@ class UserCollection {
           reject(err);
         }
         if(user){
-          user.comparePassword(password, (err, isMatch) => {
-            if(err){
-              reject(err);
-            }
-            if(isMatch){
+          if(encrypted === false){
+            user.comparePassword(password, (err, isMatch) => {
+              if(err){
+                reject(err);
+              }
+              if(isMatch){
+                fulfill(user);
+              }else{
+                fulfill(false);
+              }
+            });
+          }else{
+            User.findOne({username: username, password: password}, (err, user) => {
+              if(err){
+                reject(err);
+              }
               fulfill(user);
-            }else{
-              fulfill(false);
-            }
-          });
+            });
+          }
         }else{
           fulfill(false);
         }

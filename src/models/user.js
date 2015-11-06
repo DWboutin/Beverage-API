@@ -30,9 +30,9 @@ let userSchema = new Schema({
 
 userSchema.pre('save', function(next) {
 
-  var user = this;
+  let user = this;
   // get the current date
-  var currentDate = new Date();
+  let currentDate = new Date();
 
   // change the updated_at field to current date
   user.updated_at = currentDate;
