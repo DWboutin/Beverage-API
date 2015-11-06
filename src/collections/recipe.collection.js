@@ -1,14 +1,13 @@
-import User from '../models/user';
+import Recipe from '../models/recipe';
 import mongoose from 'mongoose';
 
-class UserCollection {
+class RecipeCollection {
 
   insert(data){
-    let user = new User(data);
+    let recipe = new Recipe(data);
 
     return new Promise((fulfill, reject) => {
-
-      user.save((err, data) => {
+      recipe.save((err, data) => {
         if(err){
           reject(err);
         }
@@ -22,38 +21,12 @@ class UserCollection {
   find(data = {}) {
     return new Promise((fulfill, reject) => {
 
-      User.find(data, '-password', (err, results) => {
+      Recipe.find(data, (err, results) => {
         if(err){
           reject(err);
         }
 
         fulfill(results);
-      });
-
-    });
-  }
-
-  login({username, password}) {
-    return new Promise((fulfill, reject) => {
-
-      User.findOne({username: username}, (err, user) => {
-        if(err){
-          reject(err);
-        }
-        if(user){
-          user.comparePassword(password, (err, isMatch) => {
-            if(err){
-              reject(err);
-            }
-            if(isMatch){
-              fulfill(user);
-            }else{
-              fulfill(false);
-            }
-          });
-        }else{
-          fulfill(false);
-        }
       });
 
     });
@@ -65,7 +38,7 @@ class UserCollection {
         fulfill(false);
       }
 
-      User.findById(id, '-password', (err, result) => {
+      Recipe.findById(id, (err, result) => {
         if(err){
           reject(err);
         }
@@ -79,13 +52,13 @@ class UserCollection {
   update(id, data) {
     return new Promise((fulfill, reject) => {
 
-      this.findById(id).then((user) => {
+      this.findById(id).then((recipe) => {
 
         Object.keys(data).forEach((key) => {
-          user[key] = data[key];
+          recipe[key] = data[key];
         });
 
-        user.save((err, data) => {
+        recipe.save((err, data) => {
           if(err){
             reject(err);
           }
@@ -103,13 +76,13 @@ class UserCollection {
   delete(id) {
     return new Promise((fulfill, reject) => {
 
-      User.findById(id, (err, user) => {
+      Recipe.findById(id, (err, recipe) => {
         if(err){
           reject(err);
         }
 
-        if(user){
-          user.remove((err, data) => {
+        if(recipe){
+          recipe.remove((err, data) => {
             if(err){
               reject(err);
             }
@@ -126,4 +99,4 @@ class UserCollection {
 
 }
 
-export default new UserCollection();
+export default new RecipeCollection();

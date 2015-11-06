@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import cors from './middlewares/cors';
 
 import UserCollection from './collections/user.collection';
+import RecipeCollection from './collections/recipe.collection';
 
 mongoose.connect( config.bd.path );
 
@@ -34,7 +35,7 @@ api.post('/user', (req, res) => {
     if(data){
       res.status(200).json({status: 1, data: data});
     }else{
-      res.status(200).json({status: 0, message: "Can't get any user"});
+      res.status(200).json({status: 0, message: "Can't create any user"});
     }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
@@ -92,6 +93,8 @@ api.post('/user/login', (req, res) => {
 
   UserCollection.login(req.body).then((user) => {
     if(user){
+      user = user.toObject();
+      delete user.password;
       res.status(200).json({status: 1, data: user});
     }else{
       res.status(200).json({status: 0, message: "Username or Password doesn't matches"});
@@ -141,6 +144,117 @@ api.post('/user/delete/:userId', (req, res) => {
       res.status(200).json({status: 1, data: data});
     }else{
       res.status(200).json({status: 0, message: "No user is found"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # POST /recipe - Recipe creation
+ * Header: {
+ *   Content-Type: application/json
+ * }
+ * Required: {
+ *   title: String,
+ *   author: String,
+ *   tags: String
+ *   code: String
+ * }
+ */
+api.post('/recipe', (req, res) => {
+  console.log(req.body);
+  RecipeCollection.insert(req.body).then((data) => {
+    console.log(data);
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't create any recipe"});
+    }
+  })
+  .catch((err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # GET /recipes - Get all recipes
+ */
+api.get('/recipes', (req, res) => {
+
+  RecipeCollection.find({}).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't get any recipes"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # GET /recipe/:recipeId - Get recipe by his id
+ * Required: {
+ *   recipeId: MongoDB _id
+ * }
+ */
+api.get('/recipe/:recipeId', (req, res) => {
+
+  RecipeCollection.findById(req.params.recipeId).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "No recipe is found"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # POST /recipe/:recipeId - Update recipe by id with data from json
+ * Header: {
+ *   Content-Type: application/json
+ * }
+ * Required: {
+ *   recipeId: MongoDB _id
+ * }
+ */
+api.post('/recipe/:recipeId', (req, res) => {
+
+  UserCollection.update(req.params.recipeId, req.body).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "No recipe is found"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # POST /recipe/delete/:recipeId - Delete recipe with his id
+ * Header: {
+ *   Content-Type: application/json
+ * }
+ * Required: {
+ *   recipeId: MongoDB _id
+ * }
+ */
+api.post('/recipe/delete/:recipeId', (req, res) => {
+
+  UserCollection.delete(req.params.recipeId).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "No recipe is found"});
     }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
