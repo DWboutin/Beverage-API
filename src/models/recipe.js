@@ -5,9 +5,11 @@ const Schema = mongoose.Schema;
 
 let recipeSchema = new Schema({
   title: { type: String, required: true  },
-  author: { type: String},
+  author: { type: String, required: true, index: true },
   tags: { type: String, required: true },
-  code: { type: String, required: true, unique: true, index: true },
+  code: { type: String, required: true, unique: true },
+  description: { type: String, required: true, unique: true },
+  packages: { type: String, required: true, unique: true },
   created_at: Date,
   updated_at: Date
 });

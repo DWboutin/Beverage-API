@@ -174,7 +174,6 @@ api.post('/recipe', (req, res) => {
     }
   })
   .catch((err) => {
-    console.log(err);
     res.status(500).json({status: 0, error: err});
   });
 
