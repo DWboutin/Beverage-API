@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 class RecipeCollection {
 
   insert(data){
+    console.log(data);
     let recipe = new Recipe(data);
 
     return new Promise((fulfill, reject) => {

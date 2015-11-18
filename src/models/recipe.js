@@ -7,7 +7,7 @@ let recipeSchema = new Schema({
   title: { type: String, required: true  },
   author: { type: String},
   tags: { type: String, required: true },
-  code: { type: String, required: true, unique: true },
+  code: { type: String, required: true, unique: true, index: true },
   created_at: Date,
   updated_at: Date
 });

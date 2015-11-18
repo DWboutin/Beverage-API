@@ -2,7 +2,7 @@ import config from '../config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-import cors from './middlewares/cors';
+import allowCrossOrigin from './middlewares/allowCrossOrigin';
 
 import UserCollection from './collections/user.collection';
 import RecipeCollection from './collections/recipe.collection';
@@ -16,7 +16,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 api.use(bodyParser.urlencoded({extended: true}));
 api.use(bodyParser.json());
-api.use(cors);
+api.use(allowCrossOrigin);
 
 /**
  * # POST /user - User creation
@@ -167,7 +167,6 @@ api.post('/user/delete/:userId', (req, res) => {
 api.post('/recipe', (req, res) => {
 
   RecipeCollection.insert(req.body).then((data) => {
-    console.log(data);
     if(data){
       res.status(200).json({status: 1, data: data});
     }else{
@@ -175,6 +174,7 @@ api.post('/recipe', (req, res) => {
     }
   })
   .catch((err) => {
+    console.log(err);
     res.status(500).json({status: 0, error: err});
   });
 
