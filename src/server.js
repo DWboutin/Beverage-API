@@ -6,6 +6,8 @@ import allowCrossOrigin from './middlewares/allowCrossOrigin';
 
 import UserCollection from './collections/user.collection';
 import RecipeCollection from './collections/recipe.collection';
+import PackageCollection from './collections/package.collection';
+import TagCollection from './collections/tag.collection';
 
 mongoose.connect( config.bd.path );
 
@@ -255,6 +257,88 @@ api.post('/recipe/delete/:recipeId', (req, res) => {
       res.status(200).json({status: 1, data: data});
     }else{
       res.status(200).json({status: 0, message: "No recipe is found"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # POST /package - Package tag creation
+ * Header: {
+ *   Content-Type: application/json
+ * }
+ * Required: {
+ *   name: String
+ * }
+ */
+api.post('/package', (req, res) => {
+
+  PackageCollection.insert(req.body).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't create any package"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+
+/**
+ * # GET /packages - Get all packages
+ */
+api.get('/packages', (req, res) => {
+
+  PackageCollection.find({}).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't get any package"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+/**
+ * # POST /tag - Tag creation
+ * Header: {
+ *   Content-Type: application/json
+ * }
+ * Required: {
+ *   name: String
+ * }
+ */
+api.post('/tag', (req, res) => {
+
+  TagCollection.insert(req.body).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't create any package"});
+    }
+  }, (err) => {
+    res.status(500).json({status: 0, error: err});
+  });
+
+});
+
+
+/**
+ * # GET /tags - Get all tags
+ */
+api.get('/tags', (req, res) => {
+
+  TagCollection.find({}).then((data) => {
+    if(data){
+      res.status(200).json({status: 1, data: data});
+    }else{
+      res.status(200).json({status: 0, message: "Can't get any package"});
     }
   }, (err) => {
     res.status(500).json({status: 0, error: err});
